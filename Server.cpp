@@ -152,6 +152,11 @@ int StartServer(int currentFD)
 		return -1;
 	}
 
+	cout << "It's okay" << endl;
+	
 	//당신은 모든 시련을 훌룡하게 이겨내셧습니다
 	return 1;
 }
+
+
+//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 이거 코드(뭔 코드인지 까먹음 암튼 매우 중요한코드)
