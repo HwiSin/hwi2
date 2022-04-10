@@ -59,7 +59,7 @@ int main()
 
 
 	                   //IPv4(4바이트 짜리 IP)
-	ListenFD.fd = socket(AF_INET, _LOCK_STREAM, 0);
+	ListenFD.fd = socket(AF_INET, SOCK_STREAM, 0);
 	ListenFD.events = POLLIN;
 	ListenFD.revents = 0;
 
@@ -73,7 +73,7 @@ int main()
 
 	//여기서 FD는 준비가 되었고! 서버를 돌려봅시다!
 	//리슨 소켛의 정보를 전달해주면서 서버를 시작할 거에요!
-	StratServer(ListenFD.fd);
+	StartServer(ListenFD.fd);
 
 	while (true)
 	{
@@ -99,7 +99,7 @@ int main()
 	for (int i = 0; i < MAX_USER_NUMBER; i++)
 	{
 		//엇.. 누가 있어? 닫아
-		if (pollFDArray[i].fd !- = 1) close(pollFDArray[i].fd);
+		if (pollFDArray[i].fd != -1) close(pollFDArray[i].fd);
 	}
 	return -4;
 }
@@ -113,18 +113,18 @@ int StartServer(int currentFD)
 		//소켓떄문에 에러가 났어요!
 		perror("socket()");
 		//혹시 모르니까 소켓꺼주기
-		Close(currentFD);
+		close(currentFD);
 		return -1;
 	}
 
 	//소켓이데가 INET이라는 정보는 넣어줬는데요
 	//그래..4바이트짜리 IP인 것은 알겠는데.. 그래서 IP가 뭐임?
 	//그래서 저희는 서버의 IP를 리슨 소켓에다가 등록을 해주어야 합니다!
-	sockadrr_in address;
+	sockaddr_in address;
 
 	//혹시 모르니까 완전 초기화 해놓고 정보를 넣을게요
 	//address 내부를 전부 0으로 맞추기!
-	mmset(&address, 0, sizeof(address));
+	memset(&address, 0, sizeof(address));
 
 	//소켓이랑 아이피 종류를 맞춰주도록 할게요!
 	address.sin_family = AF_INET;
@@ -139,7 +139,7 @@ int StartServer(int currentFD)
 	if (bind(currentFD, (struct sockaddr*)&address, sizeof(address)) == -1)
 	{
 		perror("bind()");
-		clse(currentFD);
+		close(currentFD);
 		return -1;
 	}
 
