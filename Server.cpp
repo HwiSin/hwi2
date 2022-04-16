@@ -170,7 +170,7 @@ int StartServer(int currentFD)
 	//주소가 여기에요 로 끝난다면 서버가 실행이 안될 거에요! 저장만 한 것이죠!
 	//사용해서 서버를 만들어야 할 거니까!
 	//지금 설정한 주소를 소켓에다가 "묶어" 줄 거에요!                     실패다
-	if (bind(currentFD, (struct sockaddr*)&address, sizeof(address) == 0))
+	if (bind(currentFD, (struct sockaddr*)&address, sizeof(address) == -1))
 	{
 		perror("bind()");
 		close(currentFD);
