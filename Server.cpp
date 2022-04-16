@@ -36,10 +36,10 @@
 
 using namespace std;
 
-//poll이라고 하는 것은 상대방이 반응을 해주었을 떄! 인식해서 돌려주는 개념이에요!
-//누군가 저한테 메시지를 전해줬을 떄! 서버 내용이 돌아가도록!
-//FD는 뭔가요? File dEscripter 파일을 설명해주는 녀석이요?
-//소캣을 형상화한 것인데! 리눅스는 소케이라고 하는 것도 일종의 파일 형태로 관이를 합니다!
+//poll이라고 하는 것은 상대방이 반응을 해주었을 때! 인식해서 돌려주는 개념이에요!
+//누군가 저한테 메시지를 전해줬을 때! 서버 내용이 돌아가도록!
+//FD는 뭔가요? File Descripter 파일을 설명해주는 녀석이요?
+//소켓을 형상화한 것인데! 리눅스는 소켓이라고 하는 것도 일종의 파일 형태로 관리를 합니다!
 //파일 번호를 저장할 수 있는 공간이 될 거에요! 소켓에 해당되는 파일 정보!
 struct pollfd pollFDArray[MAX_USER_NUMBER];
 
@@ -50,17 +50,17 @@ int main()
 {
 	//듣기만 하는 fd가 필요해요!
 	//사실 이상한 애가 와서 이야기를 하면 안들어야겠죠!
-	//컴퓨터는 처음 보는 IP가 와서 이야기하면 "전화 잘못거셧어요!"라고 하면서 끊어버려요!
+	//컴퓨터는 처음 보는 IP가 와서 이야기하면 "전화 잘못거셨어요!" 라고 하면서 끊어버려요!
 	//ListenFD라고 하는 애는 잘 들어줄 겁니다!
 	//아하! 이 분이 지금 접속을 하고 싶으신가 봅니다!
-	//다른 FD한테 새로운 접속을 알려주는 역호라로 둘 거에요! (입구 역활을 하는 거에요!)
-	//0번쨰 유저를 리슨소켓으로 사용할 겁니다!
+	//다른 FD한테 새로운 접속을 알려주는 역할로 둘 거에요! (입구 역할을 하는 거에요!)
+	//0번째 유저를 리슨소켓으로 사용할 겁니다!
 	struct pollfd& ListenFD = pollFDArray[0];
 
 	//현재 유저 수
 	unsigned int currentUserNumber = 0;
 
-	                   //IPv4(4바이트 짜리 IP)
+	//IPv4(4바이트짜리 IP)
 	ListenFD.fd = socket(AF_INET, SOCK_STREAM, 0);
 	ListenFD.events = POLLIN;
 	ListenFD.revents = 0;
@@ -68,48 +68,47 @@ int main()
 	//     0은 리슨소켓이니까!
 	for (int i = 1; i < MAX_USER_NUMBER; i++)
 	{
-		//File Descripter가 등록되지 않은 pollFD는요!연결이 안된 것이죠!
+		//File Descripter가 등록되지 않은 pollFD는요! 연결이 안 된 것이죠!
 		//해당되는 소켓이 없다는 뜻입니다!
 		pollFDArray[i].fd = -1;
-	}
+	};
 
 	//여기서 FD는 준비가 되었고! 서버를 돌려봅시다!
-	//리슨 소켛의 정보를 전달해주면서 서버를 시작할 거에요!
+	//리슨 소켓의 정보를 전달해주면서 서버를 시작할 거에요!
 	StartServer(ListenFD.fd);
 
 	while (true)
 	{
-		//poll에 대해서 말씀을 드릴 떄! 누군가 저한테 메세지를 전달했을 떄 실행! 
-		//0번까지도 폴에 넣어서 리슨 소켓에 대답이 있을 떄에도 들어갈 수 있게 위에서 설정해줬어요!
+		//poll에 대해서 말씀을 드릴 때! 누군가 저한테 메시지를 전달했을 때 실행!
+		//0번까지도 폴에 넣어서 리슨 소켓에 대답이 있을 때에도 들어갈 수 있게 위에서 설정해줬어요!
 		int result = poll(pollFDArray, MAX_USER_NUMBER, -1);
 
-		//연결을 시도하고 싶어하는 소켓을 새로 준비랍니다! 새로운 공간을 만들기 위한 공간??
+		//연결을 시도하고 싶어하는 소켓을 새로 준비합니다! 새로운 공간을 만들기 위한 공간?
 		struct sockaddr_in connectSocket;
-
-		//연결 하고자 하는 소켓의 주소 사이즈
+		//연결하고자 하는 소켓의 주소 사이즈!
 		socklen_t addressSize;
 
-		//누가 부르는데요? 0이면은 아무도 대답안했다! 15라고 하면, 15명이 부는다 (x 명이 부른다)
+		//누가 부르던데요? 0이면 아무도 대답안했다! 15라고 하면, 15명이 부른다!
 		if (result > 0)
 		{
 			//리슨 소켓에 반응 확인!
-			//누군가 접속을 시도라고 있습니다
+			//누군가 접속을 시도하고 있습니다!
 			if (ListenFD.revents == POLLIN)
 			{
-				cout << "Someone Connected" << endl;
-				//저희는 서버죠! 서버눈요 누군가 들어오고 싶다면 밴된 아이피가 아니라고 한다면야.. 다 받아줘야 합니다!
+				cout << "Someone Connected!" << endl;
+				//저희는 서버죠! 서버는요 누군가 들어오고 싶다면 밴된 아이피가 아니라고 한다면야.. 다 받아줘야 합니다!
 				int currentFD = accept(ListenFD.fd, (struct sockaddr*)&connectSocket, &addressSize);
 
-				//0번을 리슨 소켓으로 쓰고있어서 전체 유저 수를 -1한 상태에서 비교할게요!
-				if (currentUserNumber < MAX_USER_NUMBER - 1);
+				//0번을 리슨 소켓으로 쓰고 있어서 전체 유저 수를 -1한 상태에서 비교할게요!
+				if (currentUserNumber < MAX_USER_NUMBER - 1)
 				{
-					//0은 리슨 소켓이니까! 1부터 시작해서 도는 것이죠
+					//0은 리슨 소켓이니까! 1부터 시작해서 도는 것이죠!
 					for (int i = 1; i < MAX_USER_NUMBER; i++)
 					{
 						//비어있는 pollFD를 찾는 거에요!
 						if (pollFDArray[i].fd == -1)
 						{
-							//지금 연결한 소켓의 File Dewscriptor를 받아오기!
+							//지금 연결한 소켓의 File Descriptor를 받아오기!
 							pollFDArray[i].fd = currentFD;
 							pollFDArray[i].events = POLLIN;
 							pollFDArray[i].revents = 0;
@@ -120,21 +119,21 @@ int main()
 							++currentUserNumber;
 							//한 건 했으니까! 쉬어라!
 							break;
-						}
-					}
-				}
-			}
-		}
-	}
+						};
+					};
+				};
+			};
+		};
+	};
 
 	//리슨 소켓 닫고
 	close(ListenFD.fd);
 
 	for (int i = 0; i < MAX_USER_NUMBER; i++)
 	{
-		//엇.. 누가 있어? 닫아
+		//엇.. 누가 있어? 닫아!
 		if (pollFDArray[i].fd != -1) close(pollFDArray[i].fd);
-	}
+	};
 	return -4;
 }
 
@@ -144,19 +143,19 @@ int StartServer(int currentFD)
 	//리슨 소켓이 막혀있어요!
 	if (currentFD == -1)
 	{
-		//소켓떄문에 에러가 났어요!
+		//소켓때문에 에러가 났어요!
 		perror("socket()");
-		//혹시 모르니까 소켓꺼주기
+		//혹시 모르니까 소켓 꺼주기!
 		close(currentFD);
 		return -1;
-	}
+	};
 
-	//소켓이데가 INET이라는 정보는 넣어줬는데요
-	//그래..4바이트짜리 IP인 것은 알겠는데.. 그래서 IP가 뭐임?
+	//소켓에다가 INET이라는 정보는 넣어줬는데요
+	//그래.. 4바이트짜리 IP인 것은 알겠는데.. 그래서 IP가 뭐임?
 	//그래서 저희는 서버의 IP를 리슨 소켓에다가 등록을 해주어야 합니다!
-	struct sockaddr_in address;
+	sockaddr_in address;
 
-	//혹시 모르니까 완전 초기화 해놓고 정보를 넣을게요
+	//혹시 모르니까 완전 초기화 해놓고 정보를 넣을게요!
 	//address 내부를 전부 0으로 맞추기!
 	memset(&address, 0, sizeof(address));
 
@@ -169,33 +168,33 @@ int StartServer(int currentFD)
 
 	//주소가 여기에요 로 끝난다면 서버가 실행이 안될 거에요! 저장만 한 것이죠!
 	//사용해서 서버를 만들어야 할 거니까!
-	//지금 설정한 주소를 소켓에다가 "묶어" 줄 거에요!                     실패다
-	if (bind(currentFD, (struct sockaddr*)&address, sizeof(address) == -1))
+	//지금 설정한 주소를 소켓에다가 "묶어" 줄 거에요!                 실패다!
+	if (bind(currentFD, (struct sockaddr*)&address, sizeof(address)) == -1)
 	{
 		perror("bind()");
 		close(currentFD);
 		return -1;
-	}
+	};
 
-	//실제로 리슨 소캣을 작동을시켜봅니다!
+	//실제로 리슨 소켓을 작동을 시켜봅니다!
 	//그럼 진짜로 서버가 돌아가는 거겠죠?
 	if (listen(currentFD, 8) == -1)
 	{
 		perror("listen()");
 		close(currentFD);
 		return -1;
-	}
+	};
 
-	cout << "It's okay" << endl;
-	
-	//당신은 모든 시련을 훌룡하게 이겨내셧습니다
+	cout << "Server is On the way" << endl;
+
+	//당신은 모든 시련을 훌륭하게 이겨내셨습니다
 	return 1;
 }
 
-//대장 소켓을 정리하도록 합시다!
+//대상 소켓을 정리하도록 합시다!
 void EndFD(struct pollfd* targetFD)
 {
-	//닫아주기
+	//닫아주기!
 	close(targetFD->fd);
 
 	//닫았으니까 -1로 표시하기~!
