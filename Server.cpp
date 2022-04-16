@@ -3,7 +3,7 @@
 //외부에서 접속을 할 떄에는 퍼블릭IP가 필요하지만, 서버를 켤 떄에는
 //내부 공유기 한테 개인IP로 열거에요! 라고 이야기할 필요가 있습니다
 //내부 IP를 여기에다가 입력해주시면 됩니다!
-#define SERVER_PRIVATE_IP "54.180.104.171"
+#define SERVER_PRIVATE_IP "172.31.45.233"
 
 //컴퓨터에는 동시에 여러개의 프로그램이 작동하고 있습니다!
 //엘든링을 하고 있었어요! 네트워크를 사용하고 있죠!
@@ -57,6 +57,8 @@ int main()
 	//0번쨰 유저를 리슨소켓으로 사용할 겁니다!
 	struct pollfd& ListenFD = pollFDArray[0];
 
+	//현재 유저 수
+	unsigned int currentUserNumber;
 
 	                   //IPv4(4바이트 짜리 IP)
 	ListenFD.fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -81,14 +83,46 @@ int main()
 		//0번까지도 폴에 넣어서 리슨 소켓에 대답이 있을 떄에도 들어갈 수 있게 위에서 설정해줬어요!
 		int result = poll(pollFDArray, MAX_USER_NUMBER, -1);
 
-		//누가 부르는데요? 0이면은 아무도 대답안했다! 15라고하면, 15명이 부는다 (x 명이 부른다)
+		//연결을 시도하고 싶어하는 소켓을 새로 준비랍니다! 새로운 공간을 만들기 위한 공간??
+		struct sockaaddr_in connectSocket;
+
+		//연결 하고자 하는 소켓의 주소 사이즈
+		struct socklen_t addressSize;
+
+		//누가 부르는데요? 0이면은 아무도 대답안했다! 15라고 하면, 15명이 부는다 (x 명이 부른다)
 		if (result > 0)
 		{
 			//리슨 소켓에 반응 확인!
 			//누군가 접속을 시도라고 있습니다
 			if (ListenFD.revents == POLLIN)
 			{
-				cout << "누군가의 반응 식별!" << endl;
+				cout << "Someone Connected" << endl;
+				//저희는 서버죠! 서버눈요 누군가 들어오고 싶다면 밴된 아이피가 아니라고 한다면야.. 다 받아줘야 합니다!
+				int currentFD = accept(listenFD, (struct sockaddr*)&connectSocket, &addressSize);
+
+				//0번을 리슨 소켓으로 쓰고있어서 전체 유저 수를 -1한 상태에서 비교할게요!
+				if (currentUserNumber < MAX_USER_NUMBER - 1);
+				{
+					//0은 리슨 소켓이니까! 1부터 시작해서 도는 것이죠
+					for (int i = 1; i < MAX_USER_NUMBER; i++)
+					{
+						//비어있는 pollFD를 찾는 거에요!
+						if (pollFDArray[i].fd == -1)
+						{
+							//지금 연결한 소켓의 File Dewscriptor를 받아오기!
+							pollFDArray[i].fd = currentFD;
+							pollFDArray[i].event = POLLIN;
+							pollFDArray[i].revent = 0;
+
+							cout << "Connected : " << i << endl;
+
+							//새로 한 명 추가요!
+							++currentUserNumber;
+							//한 건 했으니까! 쉬어라!
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
