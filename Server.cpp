@@ -58,7 +58,7 @@ int main()
 	struct pollfd& ListenFD = pollFDArray[0];
 
 	//현재 유저 수
-	unsigned int currentUserNumber;
+	unsigned int currentUserNumber = 0;
 
 	                   //IPv4(4바이트 짜리 IP)
 	ListenFD.fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -154,7 +154,7 @@ int StartServer(int currentFD)
 	//소켓이데가 INET이라는 정보는 넣어줬는데요
 	//그래..4바이트짜리 IP인 것은 알겠는데.. 그래서 IP가 뭐임?
 	//그래서 저희는 서버의 IP를 리슨 소켓에다가 등록을 해주어야 합니다!
-	sockaddr_in address;
+	struct sockaddr_in address;
 
 	//혹시 모르니까 완전 초기화 해놓고 정보를 넣을게요
 	//address 내부를 전부 0으로 맞추기!
@@ -190,4 +190,15 @@ int StartServer(int currentFD)
 	
 	//당신은 모든 시련을 훌룡하게 이겨내셧습니다
 	return 1;
+}
+
+//대장 소켓을 정리하도록 합시다!
+void EndFD(struct pollfd* targetFD)
+{
+	//닫아주기
+	clse(wantFD->fd);
+
+	//닫았으니까 -1로 표시하기~!
+	targetFD->fd = -1;
+	targetFD->revents = 0;
 }
