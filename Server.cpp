@@ -84,7 +84,7 @@ int main()
 		int result = poll(pollFDArray, MAX_USER_NUMBER, -1);
 
 		//연결을 시도하고 싶어하는 소켓을 새로 준비랍니다! 새로운 공간을 만들기 위한 공간??
-		struct sockaaddr_in connectSocket;
+		struct sockaddr_in connectSocket;
 
 		//연결 하고자 하는 소켓의 주소 사이즈
 		socklen_t addressSize;
