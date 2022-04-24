@@ -78,7 +78,7 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 }
 
 //메시지를 구분하는 용도                    길이 받을 int 주세요!
-MessageType ProcessMessage(char input[4])
+MessageInfo ProcessMessage(char input[4])
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -87,7 +87,7 @@ MessageType ProcessMessage(char input[4])
 	//메시지타입          길이
 	//[][]               [][]
 
-	struct MessageInfo result;
+	MessageInfo result;
 	result.type   = (MessageType)byteConvertor.shortInteger[0]; //타입도 돌려주기
 	result.length = byteConvertor.shortInteger[1] + 4;				//길이를 주고
 		
