@@ -22,10 +22,10 @@ union ConvertionBase
 
 	float floating;
 
-	char[4] character;
+	char character[4];
 
-	short[2] shortInteger;
-	unsigned short[2] uShortInteger;
+	short shortInteger[2];
+	unsigned short uShortInteger[2];
 };
 ConvertionBase byteConvertor;
 
