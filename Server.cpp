@@ -1,14 +1,14 @@
-//서버는 아이피를 가지고 시작을합니다
+//서버는 아이피를 가지고 시작을 합니다!
 //아이피로 접속을 하는 것이죠?
-//외부에서 접속을 할 떄에는 퍼블릭IP가 필요하지만, 서버를 켤 떄에는
-//내부 공유기 한테 개인IP로 열거에요! 라고 이야기할 필요가 있습니다
+//외부에서 접속을 할 때에는 퍼블릭IP가 필요하지만, 서버를 켤 때에는
+//내부 공유기한테 개인IP로 열 거에요! 라고 이야기할 필요가 있습니다!
 //내부 IP를 여기에다가 입력해주시면 됩니다!
-#define SERVER_PRIVATE_IP "172.31.45.233"
+#define SERVER_PRIVATE_IP "54.180.104.171"
 
 //컴퓨터에는 동시에 여러개의 프로그램이 작동하고 있습니다!
 //엘든링을 하고 있었어요! 네트워크를 사용하고 있죠!
-//마영전을 같이 켜뒀습니다! 아이피만 가지고 대화를 시도하면요! 들어온 메세지가 엘든링 것인지, 마영전 것인지 전혀 알 수가 없어요!
-//"포트"하고 하는 것이 누구 메시지인지 구분할 수 있게 해줘요!
+//마영전을 같이 켜뒀습니다! 아이피만 가지고 대화를 시도하면요! 들어온 메시지가 엘든링 것인지, 마영전 것인지 전혀 알 수가 없어요!
+//"포트"라고 하는 것이 누구 메시지인지 구분할 수 있게 해줘요!
 //몇 번 포트로 주면 이 프로그램에 줄게요^^ 라고 하는 느낌!
 //49152 ~ 65535 가 자유롭게 사용할 수 있는 "동적 포트"니까 이 사이에 있는 값으로 조정해줄게요!
 #define SERVER_PORT 54321
@@ -62,13 +62,13 @@ unsigned int currentUserNumber = 0;
 void EndFD(struct pollfd* targetFD);
 int StartServer(int currentFD);
 
-//#include가 여기에 있나요?
-//헤더는 복사 붙여넣기라서 여기에 있어야 위에 있는 변수들을 사용할 수 있어서
+//왜 #include가 여기에 있나요?
+//헤더는 복사 붙여넣기라서 여기에 있어야 위에 있는 변수들을 사용할 수 있어서 여기에다 뒀어요!
 #include "Message.h"
+#include "User.h"
 
 int main()
 {
-
 	//IPv4(4바이트짜리 IP)
 	ListenFD.fd = socket(AF_INET, SOCK_STREAM, 0);
 	ListenFD.events = POLLIN;
@@ -137,6 +137,7 @@ int main()
 			//아래에서는 다른 일반 유저들을 관리하는 부분이 필요할 거에요!
 			for (int i = 1; i < MAX_USER_NUMBER; i++)
 			{
+				//대상이 전달해준 반응
 				switch (pollFDArray[i].revents)
 				{
 					//반응 없음!
@@ -145,18 +146,16 @@ int main()
 					//반응 있음!
 				case POLLIN:
 					//무슨 반응이었는지를 확인해봐야겠죠!
-					//                         읽기 버퍼             연결 해제 요청!
+					//                         읽기 버퍼            연결 해제 요청!
 					if (read(pollFDArray[i].fd, buffRecv, MAX_BUFFER_SIZE) < 1)
 					{
 						//꺼달라는데 뭐 ㅎ
 						EndFD(&pollFDArray[i]);
 						break;
-					}
+					};
 
-					cout << "Received" << endl;
-					//꺼달라고 하는 게 아니고 다은 걸 부탁했을 떄 여기에서 메시지를 처리할 필요가 있구요!!
+					//꺼달라고 하는 게 아니고 다른 걸 부탁했을 때 여기에서 메시지를 처리할 필요가 있구요!
 					BroadCastMessage(buffRecv, sizeof(buffRecv));
-					cout << "And Send" << endl;
 
 					//입력 버퍼 초기화!
 					memset(buffRecv, 0, sizeof(buffRecv));
@@ -169,7 +168,7 @@ int main()
 					EndFD(&pollFDArray[i]);
 					break;
 				};
-			}
+			};
 		};
 	};
 
@@ -247,6 +246,9 @@ void EndFD(struct pollfd* targetFD)
 	//닫았으니까 -1로 표시하기~!
 	targetFD->fd = -1;
 	targetFD->revents = 0;
+
+	//나갔으니까 유저 수 줄여주기!
+	--currentUserNumber;
 
 	cout << "User Connection has Destroyed" << endl;
 }
