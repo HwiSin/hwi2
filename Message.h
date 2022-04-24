@@ -27,11 +27,18 @@ union ConvertionBase
 	short[2] shortInteger;
 	unsigned short[2] uShortInteger;
 };
-ConvertionBase byteconvertor;
+ConvertionBase byteConvertor;
 
-void ProcessMessage()
+//메시지를 구분하는 용도                    길이 받을 int 주세요!
+MessageType ProcessMessage(char[4] input, int& outLength)
 {
+	byteConvertor.character = input;
+	//메시지타입          길이
+	//[][]               [][]
 
+	outLength = byteConvertor.shortInteger[1]; //길이를 주고
+
+	return (MessageType)byteConvertor.shortInteger[0]; //타입도 돌려주기
 }
 
 void TranslateMessage()
