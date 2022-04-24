@@ -88,7 +88,7 @@ MessageType ProcessMessage(char input[4])
 	//메시지타입          길이
 	//[][]               [][]
 
-	MessageInfo result;
+	struct MessageInfo result;
 	result.type   = (MessageType)byteConvertor.shortInteger[0]; //타입도 돌려주기
 	result.length = byteConvertor.shortInteger[1] + 4;				//길이를 주고
 		
