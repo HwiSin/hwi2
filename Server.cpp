@@ -165,7 +165,24 @@ int main()
 					};
 
 					//꺼달라고 하는 게 아니고 다른 걸 부탁했을 때 여기에서 메시지를 처리할 필요가 있구요!
-					BroadCastMessage(buffRecv, sizeof(buffRecv));
+					//BroadCastMessage(buffRecv, sizeof(buffRecv));
+					int leftSize = sizeof(buffRecv;);
+					int checkSize = 0;
+					while (leftSize > 0)
+					{
+						//지금까지 체크된 칸 다음부터 0 1 2 3
+						char header[4];
+						header[0] = buffRecv[0 + checkSize];
+						header[1] = buffRecv[1 + checkSize];
+						header[2] = buffRecv[2 + checkSize];
+						header[3] = buffRecv[3 + checkSize];
+
+						//                   움직이면서 보는거죠!
+						int currentSize = TranslateMessage(i, buffRecv + checkSize, leftSize, ProcessMessage(header));
+
+						checkSize += currentSize;
+						leftSize -= currentSize;
+					}
 
 					//입력 버퍼 초기화!
 					memset(buffRecv, 0, sizeof(buffRecv));

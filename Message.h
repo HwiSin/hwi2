@@ -29,21 +29,53 @@ union ConvertionBase
 };
 ConvertionBase byteConvertor;
 
+struct MessageInfo
+{
+	MessageInfo type;
+	int length;
+};
+
 //메시지를 구분하는 용도                    길이 받을 int 주세요!
-MessageType ProcessMessage(char[4] input, int& outLength)
+MessageType ProcessMessage(char[4] input)
 {
 	byteConvertor.character = input;
 	//메시지타입          길이
 	//[][]               [][]
 
-	outLength = byteConvertor.shortInteger[1]; //길이를 주고
-
-	return (MessageType)byteConvertor.shortInteger[0]; //타입도 돌려주기
+	MessageInfo result;
+	result.type   = (MessageType)byteConvertor.shortInteger[0]; //타입도 돌려주기
+	result.length = byteConvertor.shortInteger[1] + 4;				//길이를 주고
+		
+	return result;
 }
 
-void TranslateMessage()
+int TranslateMessage(int fromFD, char* message,int messageLength, MessageInfo info)
 {
+	//전체 길이와 하나의 메시지 길이 둘 중에 작은 값으로!
+	int currentLength = min(messageLength, info.length);
 
+	//메모리 중에서 제가 처리해야하는 메모리까지만!
+	char* target = new char[currentLength];
+	memset(target, message, currentLength);
+
+	switch (info.type)
+	{
+	case MessageType::Chat:
+		BroadCastMessage(target currentLength, fromFD);
+		break;
+	case MessageType::LogIn:
+		break;
+	case MessageType::LogOut:
+		break;
+
+	default:return;
+	}
+	//사실 메세지같은 경우는 하나씩 보내면 조금 효율이 떨어집니다 ㅎㅎ
+	//보낼 수 있을 때 여러개를 같이 보내는 게 좋습니다!
+	//모아두었다가 보내는 개념!
+	//전체 메시지 길이 - 지금 확인한 메시지 길이!
+	//아직 뒤에 메시지가 더 있어요! 라고 하는 걸 확인할 수 있죠!
+	return messageLength - info.length;
 }
 
 
