@@ -31,7 +31,7 @@ ConvertionBase byteConvertor;
 
 struct MessageInfo
 {
-	MessageInfo type;
+	MessageType type;
 	int length;
 };
 
