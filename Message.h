@@ -106,14 +106,14 @@ int TranslateMessage(int fromFD, char* message,int messageLength, MessageInfo in
 	switch (info.type)
 	{
 	case MessageType::Chat:
-		BroadCastMessage(target currentLength, fromFD);
+		BroadCastMessage(target, currentLength, fromFD);
 		break;
 	case MessageType::LogIn:
 		break;
 	case MessageType::LogOut:
 		break;
 
-	default:return;
+	default:break;
 	}
 	//사실 메세지같은 경우는 하나씩 보내면 조금 효율이 떨어집니다 ㅎㅎ
 	//보낼 수 있을 때 여러개를 같이 보내는 게 좋습니다!
