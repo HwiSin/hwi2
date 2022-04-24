@@ -1,10 +1,10 @@
-class User userArray[MAX_USER_NUMBER];
+class User* userArray[MAX_USER_NUMBER] = { nullptr };
 
 
 class User
 {
 	int fdNumber;
-	char* name = "<NULL>";
+	string name = "<NULL>";
 public:
 	User(int targetFD)
 	{

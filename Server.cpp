@@ -124,6 +124,12 @@ int main()
 
 							cout << "Connected : " << i << endl;
 
+							//이건뭐지
+							if (userArray[i] != nullptr)
+							{
+
+							}
+
 							//새로 한 명 추가요!
 							++currentUserNumber;
 							//한 건 했으니까! 쉬어라!
