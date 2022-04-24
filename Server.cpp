@@ -3,7 +3,7 @@
 //외부에서 접속을 할 때에는 퍼블릭IP가 필요하지만, 서버를 켤 때에는
 //내부 공유기한테 개인IP로 열 거에요! 라고 이야기할 필요가 있습니다!
 //내부 IP를 여기에다가 입력해주시면 됩니다!
-#define SERVER_PRIVATE_IP "54.180.104.171"
+#define SERVER_PRIVATE_IP "172.31.45.233"
 
 //컴퓨터에는 동시에 여러개의 프로그램이 작동하고 있습니다!
 //엘든링을 하고 있었어요! 네트워크를 사용하고 있죠!
@@ -117,18 +117,22 @@ int main()
 						//비어있는 pollFD를 찾는 거에요!
 						if (pollFDArray[i].fd == -1)
 						{
+							//이건뭐지 누가 있네?
+							if (userArray[i] != nullptr)
+							{
+								//저번에 혹시 안지워진 경우일 주 있어서 지워버리고 갈게요!
+								delete userArray[i];
+							}
+
 							//지금 연결한 소켓의 File Descriptor를 받아오기!
 							pollFDArray[i].fd = currentFD;
 							pollFDArray[i].events = POLLIN;
 							pollFDArray[i].revents = 0;
 
+							//유저를 새로 만들어주도록 합시다!
+							userArray[i] = new User(i);
+
 							cout << "Connected : " << i << endl;
-
-							//이건뭐지
-							if (userArray[i] != nullptr)
-							{
-
-							}
 
 							//새로 한 명 추가요!
 							++currentUserNumber;

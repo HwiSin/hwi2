@@ -9,6 +9,20 @@ enum class MessageType
 	//제가 가진 메시지 타입의 개수보다 더 많은 내용이 들어오면 무시!
 };
 
+//통합 이라고 하는 것이죠!
+//Struct랑 비슷하게 쓰실 수 있습니다!
+//차이점이 무엇이냐? 하나의 메모리를 여러가지 자료형이 공유해요!
+//[0][0][0][10]
+//          10   int
+//          \n   char[3]
+union ConvertionBase
+{
+	int integer;
+	float floating;
+	char[4] character;
+	short[2] shortInteger;
+};
+
 void ProcessMessage()
 {
 
