@@ -17,11 +17,17 @@ enum class MessageType
 //          \n   char[3]
 union ConvertionBase
 {
+	unsigned int uInteger;
 	int integer;
+
 	float floating;
+
 	char[4] character;
+
 	short[2] shortInteger;
+	unsigned short[2] uShortInteger;
 };
+ConvertionBase byteconvertor;
 
 void ProcessMessage()
 {
