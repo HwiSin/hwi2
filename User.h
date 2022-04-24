@@ -1,3 +1,6 @@
+class User userArray[MAX_USER_NUMBER];
+
+
 class User
 {
 	int fdNumber;
@@ -8,5 +11,5 @@ public:
 		fdNumber = targetFD;
 	}
 
-	void SerName(wstring wantName) { name = wantName; }
+	void SerName(string wantName) { name = wantName; };
 };
