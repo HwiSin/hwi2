@@ -44,12 +44,13 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 }
 
 //메시지를 구분하는 용도                  이걸 준 유저
-MessageInfo ProcessMessage(char* input, int userIndex)
+MessageInfo* ProcessMessage(char* input, int userIndex)
 {
 	for (int i = 0; i < 4; i++)
 	{
 		byteConvertor.character[i] = input[i];
 	}
+	MessageInfo* = result;
 	//메시지타입          길이
 	//[][]               [][]
 
@@ -68,7 +69,7 @@ MessageInfo ProcessMessage(char* input, int userIndex)
 	return result;
 }
 
-int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo info)
+int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* info)
 {
 	//전체 길이와 하나의 메시지 길이 둘 중에 작은 값으로!
 	int currentLength = min(messageLength, info.length);
@@ -77,16 +78,16 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo i
 	memcpy(target, message, currentLength);
 
 	//타입에 따라 다른 행동!
-	switch (info.type)
+	switch (info->type)
 	{
 	case MessageType::Chat:
 		BroadCastMessage(target, currentLength, fromFD);
-		cout << " Message Send TO " << endl;
+		cout << " Message Send TO " << send << "User : " << targer + 4 << endl;
 		break;
 	case MessageType::LogIn:
-		MessageInfo_Login loginInfo = (MessageInfo_Login)info;
+		MessageInfo_Login* loginInfo = (MessageInfo_Login)info;
 		//로그인 정보에서 이름을 받아와서 시도해봅니다!
-		if (userArray[formFD]->LogIn(loginInfo.name))
+		if (userArray[formFD]->LogIn(loginInfo->name))
 		{
 			BroadCastMessage(target, currentLength, fromFD);
 		}
