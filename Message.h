@@ -84,13 +84,15 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		cout << " Message Send TO " << send << "User : " << targer + 4 << endl;
 		break;
 	case MessageType::LogIn:
-		MessageInfo_Login* loginInfo = (MessageInfo_Login)info;
+	{
+		MessageInfo_Login* loginInfo = (MessageInfo_Login*)info;
 		//로그인 정보에서 이름을 받아와서 시도해봅니다!
 		if (userArray[formFD]->LogIn(loginInfo->name))
 		{
 			BroadCastMessage(target, currentLength, fromFD);
 		}
 		break;
+	}
 	case MessageType::LogOut:
 		break;
 
