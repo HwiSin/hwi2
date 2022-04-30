@@ -53,6 +53,8 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	}
 	//메시지타입          길이
 	//[][]               [][]
+
+	MessageInfo* result;
 	switch ((MessageType)byteConvertor.shortInteger[0])
 	{
 	case MessageType::LogIn:
@@ -63,7 +65,7 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 		result->type = MessageType::Chat; //타입 돌려주기!
 		break;
 	}
-	result.length = byteConvertor.shortInteger[1] + 4;				//길이를 주고
+	result->length = byteConvertor.shortInteger[1] + 4;				//길이를 주고
 
 	return result;
 }
