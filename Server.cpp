@@ -165,7 +165,7 @@ int main()
 						EndFD(&pollFDArray[i]);
 						break;
 					};
-
+					
 					//꺼달라고 하는 게 아니고 다른 걸 부탁했을 때 여기에서 메시지를 처리할 필요가 있구요!
 					//BroadCastMessage(buffRecv, sizeof(buffRecv));
 					int leftSize = sizeof(buffRecv);
