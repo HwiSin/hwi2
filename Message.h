@@ -50,10 +50,9 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	{
 		byteConvertor.character[i] = input[i];
 	}
-	MessageInfo* = result;
+	//MessageInfo* = result;
 	//메시지타입          길이
 	//[][]               [][]
-
 	switch ((MessageType)byteConvertor.shortInteger[0])
 	{
 	case MessageType::LogIn:
