@@ -71,7 +71,7 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* info)
 {
 	//전체 길이와 하나의 메시지 길이 둘 중에 작은 값으로!
-	int currentLength = min(messageLength, info.length);
+	int currentLength = min(messageLength, info->length);
 	//메모리 중에서 제가 처리해야하는 메모리까지만!
 	char* target = new char[currentLength];
 	memcpy(target, message, currentLength);
