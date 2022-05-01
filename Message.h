@@ -101,7 +101,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		cout << "Someone Try Login! Name is " << loginInfo->name << "!!" << endl;
 		//          유져번호  성공여부
 		//[][] [][] [][][][] []
-		char sndResult[9] = { 0 };
+		char sendResult[9] = { 0 };
 
 		byteConvertor.uShortInteger[0] = (short)MessageType::LogIn;
 		byteConvertor.uShortInteger[1] = 5;
