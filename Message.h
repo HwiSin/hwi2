@@ -116,7 +116,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		{
 			sendResult[8] = 1;
 			cout << "Login Succeed" << endl;
-		};
+		}
 		else
 		{
 			sendResult[8] = 0;
