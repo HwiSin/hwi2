@@ -1,4 +1,3 @@
-
 bool SendMessage(char* message, int length, int sendFD)
 {
 	//서버가 무언가 보낼 때 "적어 주는 거"에요 그래서 Write라고 부르고
@@ -35,7 +34,7 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 		//대상이 없는데 보낼 순 없겠죠?
 		if (pollFDArray[i].fd != -1)
 		{
-			//          메시지,   길이     대상의 소켓, 
+			//           메시지,   길이,   대상의 소켓
 			SendMessage(message, length, pollFDArray[i].fd);
 
 			//보냈다!   그랬더니 다 보냄! 이라고 했을 때 돌려주기!
@@ -50,11 +49,12 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	for (int i = 0; i < 4; i++)
 	{
 		byteConvertor.character[i] = input[i];
-	}
-	//메시지타입          길이
-	//[][]               [][]
+	};
+	//메시지타입		길이
+	//[][]			[][]
 
 	MessageInfo* result;
+	//메시지 타입에 따라서 내용 넣어주기!
 	switch ((MessageType)byteConvertor.shortInteger[0])
 	{
 	case MessageType::LogIn:
@@ -62,10 +62,10 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 		break;
 	default:
 		result = new MessageInfo();
-		result->type = MessageType::Chat; //타입 돌려주기!
+		result->type = MessageType::Chat;	//타입 돌려주기!
 		break;
 	}
-	result->length = byteConvertor.shortInteger[1] + 4;				//길이를 주고
+	result->length = byteConvertor.shortInteger[1] + 4;			//길이도 줍시다!
 
 	return result;
 }
@@ -83,7 +83,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 	{
 	case MessageType::Chat:
 		BroadCastMessage(target, currentLength, fromFD);
-		cout << " Message Send TO " << send << "User : " << target + 4 << endl;
+		cout << "Message Send To " << send << "User : " << target + 4 << endl;
 		break;
 	case MessageType::LogIn:
 	{
@@ -92,15 +92,15 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		if (userArray[fromFD]->LogIn(loginInfo->name))
 		{
 			BroadCastMessage(target, currentLength, fromFD);
-		}
+		};
+		cout << "Someone Try Login! Name is " << loginInfo->name << "!!" << endl;
 		break;
 	}
 	case MessageType::LogOut:
 		break;
-
 	default:break;
 	}
-	//사실 메세지같은 경우는 하나씩 보내면 조금 효율이 떨어집니다 ㅎㅎ
+	//사실 메시지같은 경우는 하나씩 보내면 조금 효율이 떨어집니다 ㅎㅎ
 	//보낼 수 있을 때 여러개를 같이 보내는 게 좋습니다!
 	//모아두었다가 보내는 개념!
 	//전체 메시지 길이 - 지금 확인한 메시지 길이!

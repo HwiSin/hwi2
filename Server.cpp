@@ -3,7 +3,7 @@
 //외부에서 접속을 할 때에는 퍼블릭IP가 필요하지만, 서버를 켤 때에는
 //내부 공유기한테 개인IP로 열 거에요! 라고 이야기할 필요가 있습니다!
 //내부 IP를 여기에다가 입력해주시면 됩니다!
-#define SERVER_PRIVATE_IP "172.31.45.233"
+#define SERVER_PRIVATE_IP "172.31.41.59"
 
 //컴퓨터에는 동시에 여러개의 프로그램이 작동하고 있습니다!
 //엘든링을 하고 있었어요! 네트워크를 사용하고 있죠!
@@ -11,7 +11,7 @@
 //"포트"라고 하는 것이 누구 메시지인지 구분할 수 있게 해줘요!
 //몇 번 포트로 주면 이 프로그램에 줄게요^^ 라고 하는 느낌!
 //49152 ~ 65535 가 자유롭게 사용할 수 있는 "동적 포트"니까 이 사이에 있는 값으로 조정해줄게요!
-#define SERVER_PORT 54321
+#define SERVER_PORT 55123
 
 //서버에서는 메시지를 보낼 겁니다!
 //메시지 무한정 보낼 수는 없어요! 네트워크 계층에는 물리계층이 있는데 물리적인 한계가 존재할 수밖에 없죠!
@@ -118,12 +118,12 @@ int main()
 						//비어있는 pollFD를 찾는 거에요!
 						if (pollFDArray[i].fd == -1)
 						{
-							//이건뭐지 누가 있네?
+							//이건 뭐지? 누가 있네?
 							if (userArray[i] != nullptr)
 							{
-								//저번에 혹시 안지워진 경우일 주 있어서 지워버리고 갈게요!
+								//저번에 혹시 안지워진 경우일 수 있어서! 지워버리고 갈게요!
 								delete userArray[i];
-							}
+							};
 
 							//지금 연결한 소켓의 File Descriptor를 받아오기!
 							pollFDArray[i].fd = currentFD;
@@ -152,7 +152,10 @@ int main()
 				switch (pollFDArray[i].revents)
 				{
 					//반응 없음!
-				case 0: break;
+				case 0:
+				{
+					break;
+				}//Switch문 안에 변수나 그런 걸 만들 때에 중괄호를 달아주셔야 해요!
 
 					//반응 있음!
 				case POLLIN:
@@ -165,19 +168,19 @@ int main()
 						EndFD(&pollFDArray[i]);
 						break;
 					};
-					
+
 					//꺼달라고 하는 게 아니고 다른 걸 부탁했을 때 여기에서 메시지를 처리할 필요가 있구요!
 					//BroadCastMessage(buffRecv, sizeof(buffRecv));
 					int leftSize = sizeof(buffRecv);
 					int checkSize = 0;
 					while (leftSize > 0)
 					{
-						//                   움직이면서 보는거죠!
+						//					움직이면서 보는 것이죠!
 						int currentSize = TranslateMessage(i, buffRecv + checkSize, leftSize, ProcessMessage(buffRecv + checkSize, i));
 
 						checkSize += currentSize;
 						leftSize -= currentSize;
-					}
+					};
 
 					//입력 버퍼 초기화!
 					memset(buffRecv, 0, sizeof(buffRecv));
@@ -185,7 +188,7 @@ int main()
 					pollFDArray[i].revents = 0;
 					break;
 				}
-					//이상한 값이 들어온 상태!
+				//이상한 값이 들어온 상태!
 				default:
 					EndFD(&pollFDArray[i]);
 					break;
