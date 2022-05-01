@@ -24,6 +24,7 @@ enum class MessageType
 	LogOut,
 	Chat,
 
+	Unknown,  //서버 전용 모르겠다 선언!
 	Length
 	//제가 가진 메시지 타입의 개수보다 더 많은 내용이 들어오면 무시!
 };
