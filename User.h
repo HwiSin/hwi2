@@ -8,7 +8,7 @@ class User
 	bool isLogin = false;
 
 public:
-	string GetName(0)
+	string GetName()
 	{
 		return name;
 	}

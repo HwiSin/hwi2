@@ -87,7 +87,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 	{
 	case MessageType::Chat:
 	{
-		MessageInfo_Chat* chatInfo = (MessageInfo_Chat)info;
+		MessageInfo_Chat* chatInfo = (MessageInfo_Chat*)info;
 		//메모리 중에서 제가 처리해야하는 메모리까지만!
 		char* sendResult = new char[currentLength + 4];
 		byteConvertor.uShortInteger[0] = (short)MessageType::Chat;
