@@ -89,7 +89,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 	{
 		MessageInfo_Chat* chatInfo = (MessageInfo_Chat)info;
 		//메모리 중에서 제가 처리해야하는 메모리까지만!
-		char sendResult = new char[currentLength + 4];
+		char* sendResult = new char[currentLength + 4];
 		byteConvertor.uShortInteger[0] = (short)MessageType::Chat;
 		//                               전체 메시지 길이에서 헤더 길이 뺀 것!
 		byteConvertor.uShortInteger[1] = currentLength - 4;
