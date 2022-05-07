@@ -8,6 +8,11 @@ class User
 	bool isLogin = false;
 
 public:
+	string GetName(0)
+	{
+		return name;
+	}
+
 	User(int targetFD)
 	{
 		fdNumber = targetFD;
