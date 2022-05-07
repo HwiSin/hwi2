@@ -33,7 +33,8 @@
 #include <sys/types.h>
 #include <string.h>
 #include <unistd.h>
-#include <queue>S
+#include <pthread.h>
+#include <queue>
 
 using namespace std;
 
