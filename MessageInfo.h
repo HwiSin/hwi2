@@ -62,7 +62,6 @@ public:
 class MessageInfo_Chat : public MessageInfo
 {
 public:
-	int userIndex;
 	string value;
 
 	MessageInfo_Chat(char* message, int targetUser)
@@ -84,7 +83,7 @@ public:
 	{
 		type = MessageType::Input;
 
-		type = wantType;
+		currentType = wantType;
 		userIndex = targetUser;
 	}
 };

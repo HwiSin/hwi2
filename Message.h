@@ -1,3 +1,29 @@
+//메시지를 전달 받아서 그 내용을 바이트단위로 분리해주는 녀석
+//메시지 타입이나 길이는 잘 읽어서 돌려드립니다^^
+void DebugMessage(char* message)
+{
+	//지금 헤더를 읽어오기 시작합니다!
+	for (int i = 0; i < 4; i++)
+	{
+		byteConvertor.character[i] = message[i];
+	};
+	
+	//첫번째 두 개의 바이트는 타입으로
+	cout << "[ type : " << byteConvertor.uShortInteger[0] << "] ";
+	
+	//그 다음 두 개의 바이튼ㄴ 길이로
+	unsigned short length = byteConvertor.uShortInteger[1];
+	cout << "[ leng : " << length << "] ";
+	
+	//뒤에 있는 애들은 몽땅 읽어오기
+	for (int i = 0; i < length; i++)
+	{
+		cout << "[" << message[i + 4] << "]";
+	}
+
+	cout << endl;
+}
+
 bool SendMessage(char* message, int length, int userNumber)
 {
 	//서버가 무언가 보낼 때 "적어 주는 거"에요 그래서 Write라고 부르고
@@ -66,6 +92,8 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	};
 	//메시지타입		길이
 	//[][]			[][]
+
+	DebugMessage(input);
 
 	MessageInfo* result;
 	//메시지 타입에 따라서 내용 넣어주기!
@@ -201,8 +229,8 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		break;
 	case MessageType::Input:
 	{
-		cout << "Input Incoming" << endl;
-		MessageInfo* inputInfo = (MessageInfo*)info;
+		cout << "Input Incomming" << endl;
+		MessageInfo_Input* inputInfo = (MessageInfo_Input*)info;
 		char* broadcastResult = new char[12];
 
 		byteConvertor.uShortInteger[0] = (short)MessageType::Input;
@@ -219,7 +247,6 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		delete[] broadcastResult;
 		break;
 	}
-
 	case MessageType::EndOfLine:
 		return MAX_BUFFER_SIZE; //최대치까지 밀어서 그 뒤에 메시지가 더 없다고 알려줍니다!
 
