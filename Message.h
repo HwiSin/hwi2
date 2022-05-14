@@ -6,7 +6,7 @@ void DebugMessage(char* message)
 	for (int i = 0; i < 4; i++)
 	{
 		byteConvertor.character[i] = message[i];
-	};
+	};[]
 	
 	//첫번째 두 개의 바이트는 타입으로
 	cout << "[ type : " << byteConvertor.uShortInteger[0] << "] ";
@@ -18,7 +18,7 @@ void DebugMessage(char* message)
 	//뒤에 있는 애들은 몽땅 읽어오기
 	for (int i = 0; i < length; i++)
 	{
-		cout << "[" << message[i + 4] << "]";
+		cout << "[" << (int)message[i + 4] << "]";
 	}
 
 	cout << endl;
@@ -230,6 +230,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 	case MessageType::Input:
 	{
 		cout << "Input Incomming" << endl;
+		currentLength += 4;
 		MessageInfo_Input* inputInfo = (MessageInfo_Input*)info;
 		char* broadcastResult = new char[12];
 
