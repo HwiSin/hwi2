@@ -6,10 +6,10 @@ void DebugMessage(char* message)
 	for (int i = 0; i < 4; i++)
 	{
 		byteConvertor.character[i] = message[i];
-	};[]
+	};
 	
 	//첫번째 두 개의 바이트는 타입으로
-	cout << "[ type : " << byteConvertor.uShortInteger[0] << "] ";
+	cout << "[ type : " << byteConvertor.uShortInteger[0] << "] " << endl;
 	
 	//그 다음 두 개의 바이튼ㄴ 길이로
 	unsigned short length = byteConvertor.uShortInteger[1];
