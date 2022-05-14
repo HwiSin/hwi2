@@ -8,8 +8,15 @@ void DebugMessage(char* message)
 		byteConvertor.character[i] = message[i];
 	};
 	
+	unsigned Short type = byteConvertor.uShortInteger[0];
+
+	//타입이 0이니까 더 메시지가 없어요!
+	if (type == 0)
+	{
+		return;
+	}
 	//첫번째 두 개의 바이트는 타입으로
-	cout << "[ type : " << byteConvertor.uShortInteger[0] << "] ";
+	cout << "[ type : " << Short << "] ";
 	
 	//그 다음 두 개의 바이튼ㄴ 길이로
 	unsigned short length = byteConvertor.uShortInteger[1];
@@ -241,7 +248,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		byteConvertor.integer = inputInfo->userIndex;
 		for (int i = 0; i < 4; i++) broadcastResult[i + 4] = byteConvertor.character[i];
 
-		byteConvertor.integer = (int)inputInfo->type;
+		byteConvertor.integer = (int)inputInfo->currentType;
 		for (int i = 0; i < 4; i++) broadcastResult[i + 8] = byteConvertor.character[i];
 
 		BroadCastMessage(broadcastResult, 12);
