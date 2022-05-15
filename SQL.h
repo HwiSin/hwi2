@@ -9,7 +9,7 @@
 MYSQL* SQLConnection;
 
 //SQL한테 "질문"을 합니다! SQL은 저희한테 "대답"해주죠!
-mySQL_RES* SQULResponse;
+MYSQL_RES* SQULResponse;
 
 //검색을 해서 결과로 나온 줄을 여기에다가 둡시다!
 MYSQL_ROW resultRow;
@@ -25,12 +25,24 @@ int SQLConnect()
 	}
 
 	//초기화를 했으니까 그 위치에다가 "실제 연결"을 시키는 겁니다!
-	if (!(mysql_real_connect(SQLConnection, SQL_ADDRESS,  SQL_ID,  SQL_PW, NULL, 3306,  NULL,  0)))
+	if (!(mysql_real_connect(SQLConnection, SQL_ADDRESS, SQL_ID, SQL_PW, NULL, 3306, NULL, 0)))
 	{               //        대상 포인터    주소(내 컴터) 아이디     비번         포트
 		cout << "MYSQL Connection Failed" << endl;
 		return -1;
 	}
 
 	cout << "MYSQL Connectin Succeed" << endl;
+
+	//어..? login_info가 없네요?
+	if (mysql_query(SQLConnection, "use Project9") != 0)
+	{
+		//없으면 만들면 되지!
+		mysql_query(SQLConnection, "CREATE DATABASE Project9");
+		mysql_query(SQLConnection, "USE Project9");
+		mysql_query(SQLConnection, "CREATE TABLE UserData(ID VARCHAR(24) PRIMARY KEY, PW VARCHAR(24), NAME VARCHAR(24))");
+
+		cout << "Table Created" << endl;
+	}
+
 	return 0;
 }
