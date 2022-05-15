@@ -300,6 +300,13 @@ int StartServer(int currentFD)
 		return -1;
 	};
 
+	//SQL연결까지 시도해봅시다
+	if (SQLConnect() == -1)
+	{
+		//SQL연결은 안쪽에서 왜 안되었는지 이야기해줍니다 count은 안할게요!
+		return -1;S
+	}
+
 	cout << "Server is On the way" << endl;
 
 	//당신은 모든 시련을 훌륭하게 이겨내셨습니다
