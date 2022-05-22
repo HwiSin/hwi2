@@ -3,7 +3,7 @@
 //외부에서 접속을 할 때에는 퍼블릭IP가 필요하지만, 서버를 켤 때에는
 //내부 공유기한테 개인IP로 열 거에요! 라고 이야기할 필요가 있습니다!
 //내부 IP를 여기에다가 입력해주시면 됩니다!
-#define SERVER_PRIVATE_IP "172.31.45.233"
+#define SERVER_PRIVATE_IP "172.31.41.59"
 
 //컴퓨터에는 동시에 여러개의 프로그램이 작동하고 있습니다!
 //엘든링을 하고 있었어요! 네트워크를 사용하고 있죠!
@@ -11,7 +11,7 @@
 //"포트"라고 하는 것이 누구 메시지인지 구분할 수 있게 해줘요!
 //몇 번 포트로 주면 이 프로그램에 줄게요^^ 라고 하는 느낌!
 //49152 ~ 65535 가 자유롭게 사용할 수 있는 "동적 포트"니까 이 사이에 있는 값으로 조정해줄게요!
-#define SERVER_PORT 54321
+#define SERVER_PORT 55123
 
 //서버에서는 메시지를 보낼 겁니다!
 //메시지 무한정 보낼 수는 없어요! 네트워크 계층에는 물리계층이 있는데 물리적인 한계가 존재할 수밖에 없죠!
@@ -76,6 +76,7 @@ int StartServer(int currentFD);
 
 //왜 #include가 여기에 있나요?
 //헤더는 복사 붙여넣기라서 여기에 있어야 위에 있는 변수들을 사용할 수 있어서 여기에다 뒀어요!
+#include "SQL.h"
 #include "User.h"
 #include "MessageInfo.h"
 #include "Message.h"
@@ -300,12 +301,12 @@ int StartServer(int currentFD)
 		return -1;
 	};
 
-	//SQL연결까지 시도해봅시다
+	//SQL연결까지 시도해봅시다!
 	if (SQLConnect() == -1)
 	{
-		//SQL연결은 안쪽에서 왜 안되었는지 이야기해줍니다 count은 안할게요!
-		return -1;S
-	}
+		//SQL연결은 안쪽에서 왜 안되었는지 이야기해줍니다! cout은 안할게요!
+		return -1;
+	};
 
 	cout << "Server is On the way" << endl;
 

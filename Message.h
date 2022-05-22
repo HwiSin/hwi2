@@ -1,32 +1,32 @@
-//메시지를 전달 받아서 그 내용을 바이트단위로 분리해주는 녀석
+//메시지를 전달받아서 그 내용을 바이트단위로 분리해주는 녀석!
 //메시지 타입이나 길이는 잘 읽어서 돌려드립니다^^
 void DebugMessage(char* message)
 {
-	//지금 헤더를 읽어오기 시작합니다!
+	//처음 헤더를 읽어오기 시작합니다!
 	for (int i = 0; i < 4; i++)
 	{
 		byteConvertor.character[i] = message[i];
 	};
-	
-	unsigned Short type = byteConvertor.uShortInteger[0];
 
-	//타입이 0이니까 더 메시지가 없어요!
+	unsigned short type = byteConvertor.uShortInteger[0];
+
+	//타입이 0이니까! 더 메시지가 없어요!
 	if (type == 0)
 	{
 		return;
-	}
-	//첫번째 두 개의 바이트는 타입으로
-	cout << "[ type : " << Short << "] ";
-	
-	//그 다음 두 개의 바이튼ㄴ 길이로
+	};
+	//첫 번째 두 개의 바이트는 타입으로!
+	cout << "[ type : " << type << "] ";
+
+	//그 다음 두 개의 바이트는 길이로!
 	unsigned short length = byteConvertor.uShortInteger[1];
 	cout << "[ leng : " << length << "] ";
-	
-	//뒤에 있는 애들은 몽땅 읽어오기
+
+	//뒤에 있는 애들을 몽땅 읽어오기!
 	for (int i = 0; i < length; i++)
 	{
 		cout << "[" << (int)message[i + 4] << "]";
-	}
+	};
 
 	cout << endl;
 }
@@ -110,6 +110,8 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 
 	case MessageType::LogIn:	result = new MessageInfo_Login(input, userIndex);
 		break;
+	case MessageType::SignUp:	result = new MessageInfo_SignUp(input, userIndex);
+		break;
 	case MessageType::Chat:		result = new MessageInfo_Chat(input, userIndex);
 		break;
 	case MessageType::Input:
@@ -167,13 +169,29 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		delete sendResult;
 		break;
 	}
+	case MessageType::SignUp:
+	{
+		MessageInfo_SignUp* signupInfo = (MessageInfo_SignUp*)info;
+		cout << "Someone Try SignUp! Name is " << signupInfo->name << ", pw is " << signupInfo->password;
+		cout << ", nicname is " << signupInfo->nicname << endl;
+		string columns[3];
+		columns[0] = "ID";
+		columns[1] = "PW";
+		columns[2] = "NAME";
+		string values[3];
+		values[0] = "\"" + signupInfo->name + "\"";
+		values[1] = "\"" + signupInfo->password + "\"";
+		values[2] = "\"" + signupInfo->nicname + "\"";
+		SQLInsert("certification", 3, columns, 3, values);
+		break;
+	}
 	case MessageType::LogIn:
 	{
 		MessageInfo_Login* loginInfo = (MessageInfo_Login*)info;
 
 		cout << "Someone Try Login! Name is " << loginInfo->name << "!!" << endl;
 		//           유저번호  성공여부 (로그인 성공 / 중복 로그인 / 신규 로그인)
-		//[][] [][]  [][][][] [][]
+		//[][] [][]  [][][][] []
 		char sendResult[9] = { 0 };
 
 		byteConvertor.uShortInteger[0] = (short)MessageType::LogIn;
@@ -184,19 +202,19 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 			sendResult[i] = byteConvertor.character[i];
 		};
 
-		sendResult[8] = userArray[fromFD]->LogIn(loginInfo->name)
+		sendResult[8] = userArray[fromFD]->LogIn(loginInfo->name);
 
 		//로그인 정보에서 이름을 받아와서 시도해봅니다!
-		switch(sendResult[8])
+		switch (sendResult[8])
 		{
 		case 0: cout << "Login Succeed" << endl; break;
 		case 1: cout << "Invalide Password" << endl; break;
 		case 2: cout << "Already Logined" << endl; break;
 		case 3: cout << "Non-Exist ID" << endl; break;
 		case 4: cout << "ID Not Fit In Form" << endl; break;
-		default: cout << "Unknown Error" << endl; break;
-		}
-		
+		default:cout << "Unknown Error" << endl; break;
+		};
+
 		//본인한테 성공 여부를 보내주는 것!
 		SendMessage(sendResult, 9, fromFD);
 
@@ -238,7 +256,6 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		break;
 	case MessageType::Input:
 	{
-		cout << "Input Incomming" << endl;
 		currentLength += 4;
 		MessageInfo_Input* inputInfo = (MessageInfo_Input*)info;
 		char* broadcastResult = new char[12];
