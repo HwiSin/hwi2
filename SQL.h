@@ -30,6 +30,31 @@ MYSQL_RES* SQLResponse;
 //검색을 해서 결과로 나온 줄을 여기에다가 둡시다!
 MYSQL_ROW resultRow;
 
+bool SQLQuery(string queryString)
+{
+	//그래서 실제로 쿼리를 해봅니다!
+	if (mysql_query(SQLConnection, queryString.c_str()) != 0)
+	{
+		cout << "Query Error Occured: " << mysql_error(SQLConnection);
+		return false;
+	};
+
+	//쿼리를 해서 나온 결과의 상태!
+	SQLResponse = mysql_store_result(SQLConnection);
+	return true;
+};
+
+bool SQLSelect(string tableName, string wantColumn, string conditionWhere)
+{
+	//    원하는 열     테이블            조건
+	//SELECT * FROM certification WHERE ID = "a";
+	string queryString = "SELECT " + wantColumn;
+	queryString += " FROM " + tableName;
+	queryString += " WHERE " + conditionWhere + ";";
+
+	return SQLQuery(queryString);
+}
+
 bool SQLInsert(string tableName, int columnAmount, string* columnNames, int valueAmount, string* values)
 {
 	if (columnAmount <= 0) return false;
@@ -59,19 +84,7 @@ bool SQLInsert(string tableName, int columnAmount, string* columnNames, int valu
 
 	queryString += ");";
 
-	cout << queryString.c_str() << endl;
-	//그래서 실제로 쿼리를 해봅니다!
-	mysql_query(SQLConnection, queryString.c_str());
-
-	//쿼리를 해서 나온 결과의 상태!
-	SQLResponse = mysql_store_result(SQLConnection);
-
-	//아.. 못가져왔구나..
-	if (SQLResponse == nullptr) return false;
-
-	//저희가 하나의 줄로 받아오도록 하면 됩니다!
-	//resultRow = mysql_fetch_row(SQLResponse);
-	return true;
+	return SQLQuery(queryString);
 }
 
 //MYSQL에 실제로 연결하는 함수가 필요할 거에요!
@@ -85,7 +98,7 @@ int SQLConnect()
 	};
 
 	//초기화를 했으니까 그 위치에다가 "실제 연결"을 시키는 겁니다!
-	if (!(mysql_real_connect(SQLConnection, SQL_ADDRESS, SQL_ID, SQL_PW, NULL, 3306, NULL, 0)))
+	if (!(mysql_real_connect(SQLConnection, SQL_ADDRESS,  SQL_ID, SQL_PW, NULL, 3306, NULL, 0)))
 	{                    //   대상 포인터   주소(내 컴퓨터) 아이디   비번          포트
 		cout << "MYSQL Connection Failed" << endl;
 		return -1;
@@ -94,12 +107,12 @@ int SQLConnect()
 	cout << "MYSQL Connection Succeed" << endl;
 
 	//어..? login_info가 없네요?
-	if (mysql_query(SQLConnection, "USE Project9") != 0)
+	if (mysql_query(SQLConnection, "USE login_info") != 0)
 	{
 		//없으면 만들면 되지!
-		mysql_query(SQLConnection, "CREATE DATABASE Project9");
-		mysql_query(SQLConnection, "USE Project9");
-		mysql_query(SQLConnection, "CREATE TABLE UserData(ID VARCHAR(24) PRIMARY KEY, PW VARCHAR(24), NAME VARCHAR(24))");
+		mysql_query(SQLConnection, "CREATE DATABASE login_info");
+		mysql_query(SQLConnection, "USE login_info");
+		mysql_query(SQLConnection, "CREATE TABLE UserData(ID VARCHAR(24) PRIMARY KEY, PW CHAR(64) NOT NULL, NAME VARCHAR(24) NOT NULL)");
 
 		cout << "Table Created" << endl;
 	};

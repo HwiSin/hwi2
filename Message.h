@@ -11,8 +11,8 @@ void DebugMessage(char* message)
 	unsigned short type = byteConvertor.uShortInteger[0];
 
 	//타입이 0이니까! 더 메시지가 없어요!
-	if (type == 0)
-	{
+	if (type == 0) 
+	{ 
 		return;
 	};
 	//첫 번째 두 개의 바이트는 타입으로!
@@ -71,7 +71,7 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 	int send = sendSelf ? 0 : 1;
 	//			 조건   ? true : false
 	//     본인한테 보냄?  아무한테도 아직 안보냈다! : 1명 보내놨다!
-
+	
 	// 0번은 리슨 소켓!   최대치까지 갔거나, 또는 현재 유저 수만큼 보냈다면!
 	for (int i = 1; i < MAX_USER_NUMBER; i++)
 	{
@@ -82,7 +82,7 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 		if (pollFDArray[i].fd != -1)
 		{
 			//           메시지,   길이,   대상
-			SendMessage(message, length, i);
+			SendMessage(message, length,  i);
 
 			//보냈다!   그랬더니 다 보냄! 이라고 했을 때 돌려주기!
 			if (++send >= currentUserNumber) break;
@@ -109,7 +109,7 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	case MessageType::EndOfLine:return nullptr;
 
 	case MessageType::LogIn:	result = new MessageInfo_Login(input, userIndex);
-		break;
+		break;	
 	case MessageType::SignUp:	result = new MessageInfo_SignUp(input, userIndex);
 		break;
 	case MessageType::Chat:		result = new MessageInfo_Chat(input, userIndex);
@@ -120,9 +120,9 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 		result = new MessageInfo_Input((InputType)byteConvertor.integer, userIndex);
 		break;
 	default:					result = new MessageInfo();
-		result->type = MessageType::Unknown;
+								result->type = MessageType::Unknown;
 	}
-	result->length = byteConvertor.shortInteger[1] + 4;			//길이도 줍시다!
+	result->length	= byteConvertor.shortInteger[1] + 4;			//길이도 줍시다!
 
 	return result;
 }
@@ -133,7 +133,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 	if (info == nullptr) return MAX_BUFFER_SIZE;
 
 	//전체 길이와 하나의 메시지 길이 둘 중에 작은 값으로!
-	int currentLength = min(messageLength, info->length);
+	int currentLength = min(messageLength, info->length);	
 
 	//타입에 따라 다른 행동!
 	switch (info->type)
@@ -174,15 +174,46 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		MessageInfo_SignUp* signupInfo = (MessageInfo_SignUp*)info;
 		cout << "Someone Try SignUp! Name is " << signupInfo->name << ", pw is " << signupInfo->password;
 		cout << ", nicname is " << signupInfo->nicname << endl;
-		string columns[3];
-		columns[0] = "ID";
-		columns[1] = "PW";
-		columns[2] = "NAME";
-		string values[3];
-		values[0] = "\"" + signupInfo->name + "\"";
-		values[1] = "\"" + signupInfo->password + "\"";
-		values[2] = "\"" + signupInfo->nicname + "\"";
-		SQLInsert("certification", 3, columns, 3, values);
+
+		string selectWhere = "ID = \"" + signupInfo->name + "\"";
+		SQLSelect("certification", "*", selectWhere);
+
+		resultRow = mysql_fetch_row(SQLResponse);
+		char sendResult[5];
+		byteConvertor.uShortInteger[0] = (unsigned short)MessageType::SignUp;
+		byteConvertor.uShortInteger[1] = 1;
+		for (int i = 0; i < 4; i++)
+		{
+			sendResult[i] = byteConvertor.character[i];
+		};
+		
+		//쿼리를 해보았는데 대상이 있네요!
+		if (resultRow != nullptr)
+		{
+			cout << resultRow[0] << " was already in Database" << endl;
+			sendResult[4] = 0;
+		}
+		else
+		{
+			string columns[3];
+			columns[0] = "ID";
+			columns[1] = "PW";
+			columns[2] = "NAME";
+			string values[3];
+			values[0] = "\"" + signupInfo->name + "\"";
+			values[1] = "\"" + signupInfo->password + "\"";
+			values[2] = "\"" + signupInfo->nicname + "\"";
+			if (SQLInsert("certification", 3, columns, 3, values))
+			{
+				cout << signupInfo->name << " has Inserted to Database" << endl;
+				sendResult[4] = 1;
+			}
+			else
+			{
+				sendResult[4] = 0;
+			};
+		};
+		SendMessage(sendResult, 5, fromFD);
 		break;
 	}
 	case MessageType::LogIn:
@@ -202,17 +233,17 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 			sendResult[i] = byteConvertor.character[i];
 		};
 
-		sendResult[8] = userArray[fromFD]->LogIn(loginInfo->name);
+		sendResult[8] = userArray[fromFD]->LogIn(loginInfo->name, loginInfo->password);
 
 		//로그인 정보에서 이름을 받아와서 시도해봅니다!
 		switch (sendResult[8])
 		{
-		case 0: cout << "Login Succeed" << endl; break;
+		case 0: cout << "Login Succeed"		<< endl; break;
 		case 1: cout << "Invalide Password" << endl; break;
-		case 2: cout << "Already Logined" << endl; break;
-		case 3: cout << "Non-Exist ID" << endl; break;
-		case 4: cout << "ID Not Fit In Form" << endl; break;
-		default:cout << "Unknown Error" << endl; break;
+		case 2: cout << "Already Logined"	<< endl; break;
+		case 3: cout << "Non-Exist ID"		<< endl; break;
+		case 4: cout << "ID Not Fit In Form"<< endl; break;
+		default:cout << "Unknown Error"		<< endl; break;
 		};
 
 		//본인한테 성공 여부를 보내주는 것!
